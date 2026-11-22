@@ -5,17 +5,15 @@ import ErrorBox from '../components/ErrorBox'
 import GlassButton from '../components/GlassButton'
 import QtyStepper from '../components/QtyStepper'
 import SafeImage from '../components/SafeImage'
-import { useLoyalty } from '../hooks/useLoyalty'
-import { useSettings } from '../hooks/useSettings'
-import { formatEGP, ordinal } from '../lib/format'
+import LoyaltyCard from '../components/LoyaltyCard'
+import { useCartTotals } from '../hooks/useCartTotals'
+import { formatEGP } from '../lib/format'
 import { imageUrl } from '../lib/products'
-import type { LoyaltyInfo, StoreSettings } from '../types'
 
 export default function Cart() {
   const navigate = useNavigate()
-  const { lines, subtotal, setQuantity, remove } = useCart()
-  const { settings, error: settingsError } = useSettings()
-  const loyalty = useLoyalty()
+  const { lines, setQuantity, remove } = useCart()
+  const { subtotal, discount, delivery, total, settings, settingsError, loyalty } = useCartTotals()
 
   if (lines.length === 0) {
     return (
@@ -34,14 +32,6 @@ export default function Cart() {
       </>
     )
   }
-
-  // This is only a preview. The server checks the real discount at checkout (Step 4).
-  const discount =
-    loyalty?.discount_ready && settings
-      ? Math.round(subtotal * settings.loyalty_discount_percent) / 100
-      : 0
-  const delivery = settings?.delivery_fee_egp ?? null
-  const total = delivery === null ? null : subtotal - discount + delivery
 
   return (
     <>
@@ -119,47 +109,5 @@ export default function Cart() {
         </GlassButton>
       </div>
     </>
-  )
-}
-
-/** Steps 1, 2, % . The last step is the discount. */
-function LoyaltyCard({ settings, loyalty }: { settings: StoreSettings; loyalty: LoyaltyInfo | null }) {
-  const required = settings.loyalty_orders_required
-  const percent = settings.loyalty_discount_percent
-  const current = loyalty?.current_step ?? 0 // 0 = not logged in
-
-  let message: string
-  if (!loyalty) {
-    message = `Your ${ordinal(required)} order unlocks ${percent}% off. Log in to see your progress.`
-  } else if (loyalty.discount_ready) {
-    message = `This is your ${ordinal(required)} order: ${percent}% off!`
-  } else {
-    message = `Order ${current} of ${required}. Your ${ordinal(required)} order unlocks ${percent}% off.`
-  }
-
-  return (
-    <section className="mt-5 rounded-[1.5rem] bg-lavender p-4">
-      <div className="flex items-center gap-2" aria-hidden="true">
-        {Array.from({ length: required }, (_, i) => {
-          const step = i + 1
-          const isDiscount = step === required
-          const done = current > 0 && step < current
-          const here = current > 0 && step === current
-          return (
-            <div key={step} className="flex flex-1 items-center gap-2 last:flex-none">
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold ${
-                  done || here ? 'bg-plum text-white' : 'bg-white/70 text-plum'
-                } ${here ? 'ring-2 ring-plum ring-offset-2 ring-offset-lavender' : ''}`}
-              >
-                {isDiscount ? '%' : step}
-              </span>
-              {!isDiscount && <span className="h-1 flex-1 rounded-full bg-white/70" />}
-            </div>
-          )
-        })}
-      </div>
-      <p className="mt-3 text-sm font-medium">{message}</p>
-    </section>
   )
 }

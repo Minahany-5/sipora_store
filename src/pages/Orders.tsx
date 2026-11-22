@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ErrorBox from '../components/ErrorBox'
 import GlassButton from '../components/GlassButton'
+import OrderActions from '../components/OrderActions'
 import Skeleton from '../components/Skeleton'
 import { useSession } from '../hooks/useSession'
 import { formatDate, formatEGP } from '../lib/format'
@@ -68,7 +69,11 @@ export default function Orders() {
       {ready && !userId && (
         <div className="mt-6 rounded-[1.75rem] bg-lavender p-5 text-center">
           <p className="font-display text-lg font-bold">Log in to see your orders</p>
-          <p className="mt-1 text-sm text-plum/70">Login and sign up are coming in Step 5.</p>
+          <div className="mt-3">
+            <GlassButton variant="plum" onClick={() => navigate('/login', { state: { from: '/orders' } })}>
+              Log in
+            </GlassButton>
+          </div>
         </div>
       )}
 
@@ -127,6 +132,7 @@ export default function Orders() {
                 </span>
                 <span className="font-semibold">{formatEGP(o.total_egp)}</span>
               </div>
+              <OrderActions order={o} onChanged={() => setAttempt((n) => n + 1)} />
             </li>
           ))}
         </ul>

@@ -181,5 +181,24 @@ for (const { name, path } of imagePaths) {
   }
 }
 
+// ---------- 5. The Node server ----------
+title('5. Sipora server (the "server" folder)')
+const apiUrl = (env.VITE_API_URL ?? '').replace(/\/+$/, '')
+if (!apiUrl) {
+  fail('VITE_API_URL is missing in .env', 'Add this line to .env:  VITE_API_URL=http://localhost:3001')
+} else {
+  try {
+    const res = await fetch(`${apiUrl}/health`, { signal: AbortSignal.timeout(5000) })
+    const json = await res.json().catch(() => null)
+    if (res.ok && json?.ok) ok(`The server answers at ${apiUrl}`)
+    else fail(`The server at ${apiUrl} answered, but it is not the Sipora server (HTTP ${res.status})`)
+  } catch {
+    fail(
+      `Cannot reach the server at ${apiUrl}`,
+      'Open a second PowerShell window, go to the server folder, and run: npm run dev   (needed for checkout)',
+    )
+  }
+}
+
 title(failures === 0 ? '🎉 Everything is OK. Run: npm run dev' : `Found ${failures} problem(s). Fix the ❌ lines, then run: npm run check`)
 process.exit(failures === 0 ? 0 : 1)

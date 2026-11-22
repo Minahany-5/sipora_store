@@ -94,3 +94,38 @@ export interface OrderRow {
   order_items: { product_name: string; color_name: string | null; size_label: string | null; quantity: number }[]
   payments: { status: 'pending' | 'approved' | 'rejected' }[]
 }
+
+export type UserRole = 'admin' | 'staff' | 'customer'
+
+/** One row of the "profiles" table (the logged-in person). */
+export interface Profile {
+  full_name: string | null
+  phone: string | null
+  role: UserRole
+  completed_orders: number
+  language: string
+  theme: 'light' | 'dark'
+}
+
+/** One row of the "addresses" table. */
+export interface Address {
+  id: string
+  label: string
+  full_address: string
+  latitude: number | null
+  longitude: number | null
+  phone: string | null
+  created_at: string
+}
+
+/** The answer of POST /api/orders (from the Node server). */
+export interface PlacedOrder {
+  id: string
+  orderNumber: number
+  status: 'pending'
+  subtotal: number
+  discount: number
+  deliveryFee: number
+  total: number
+  loyaltyApplied: boolean
+}

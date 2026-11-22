@@ -1,92 +1,56 @@
-# Sipora – Step 1: Project Setup
+# Sipora
 
-Luxury Owala bottle store for Cairo.
-Stack: **React + TypeScript + Tailwind CSS v4 + Vite**, **Supabase** (Postgres), deployed on **Vercel**.
+Online store for **Owala bottles** in Cairo, Egypt. "Find your own Owala."
 
-## 1. What you need installed (one time)
-1. **Node.js 20 or newer** – https://nodejs.org (choose "LTS"). Check: `node -v`
-2. **VS Code** – https://code.visualstudio.com
-3. **Git** – https://git-scm.com  (you already know Git)
-4. Recommended VS Code extensions: *Tailwind CSS IntelliSense*, *ESLint/Oxc*, *Prettier*.
+- Website: React + TypeScript + Tailwind CSS v4 + Vite (this folder)
+- Server: Node.js + Express + TypeScript (`server/`)
+- Database, login and photos: Supabase (PostgreSQL, Auth, Storage)
+- Emails: Resend. Hosting: Vercel (Step 8).
 
-## 2. Run the project
-Open the `sipora` folder in VS Code, then open the terminal (Ctrl + `) and run:
+## Folders
 
-```bash
-npm install        # downloads the libraries (only the first time)
-npm run dev        # starts the site
-```
+| Folder | What is inside |
+| --- | --- |
+| `src/` | The website (screens, components, login, bag, checkout) |
+| `server/` | The Node.js server: orders, loyalty discount, Instapay approval, emails |
+| `supabase/` | SQL for the database, the 6 products, and their photos |
+| `docs/` | Notes for each step |
 
-Open the link it prints (usually http://localhost:5173).
-Tip: on your phone, use the "Network" link on the same Wi-Fi to see the mobile view.
+## Run it on your computer
 
-Other commands:
+You need Node.js 20 or newer.
 
-| Command           | What it does                                   |
-|-------------------|------------------------------------------------|
-| `npm run dev`     | Start the site while you work                  |
-| `npm run build`   | Check types and make the production version    |
-| `npm run preview` | Preview the production version                 |
-| `npm run lint`    | Find code mistakes                             |
+1. Database (once): in Supabase > SQL Editor run, in this order:
+   `supabase/schema.sql`, then upload the photos in `supabase/product-images/` to the
+   `product-images` bucket, then `supabase/seed-products.sql`, then `server/sql/step4.sql`.
+2. Website `.env` (copy `.env.example` to `.env` and fill it):
+   `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_URL`
+3. Server `.env` (in `server/`, copy `.env.example` to `.env` and fill it):
+   `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_KEY` (the SECRET key)
+4. Start:
 
-## 3. Folder structure
+       npm install
+       npm run check        # tests your files, .env, tables, photos and the server
+       npm run dev          # the website
 
-```
-sipora/
-├─ index.html               Page shell + Google Fonts (Fraunces, Inter)
-├─ vite.config.ts           Vite + React + Tailwind plugins
-├─ .env.example             Copy to .env and add Supabase keys (step 2)
-├─ public/                  Static files (favicon, later product images)
-└─ src/
-   ├─ main.tsx              App entry point
-   ├─ App.tsx               Root component (router comes in step 3)
-   ├─ index.css             Colors, fonts, and the GLASS WATER-DROP buttons
-   ├─ components/
-   │  ├─ GlassButton.tsx    The glassy button (variants: clear, plum, mint, salmon, rose, lavender)
-   │  ├─ BottomNav.tsx      Glass pill navigation (Home, Discover, Bag, Account)
-   │  └─ BottleIcon.tsx     Illustrated bottle, any color
-   ├─ pages/
-   │  └─ Home.tsx           Starter Home screen from the design
-   ├─ lib/
-   │  └─ supabase.ts        Supabase connection (needs .env)
-   └─ types/
-      └─ index.ts           Shared TypeScript types
-```
+       cd server
+       npm install
+       npm run dev          # the server (second window)
+       npm run smoke        # safe test of the whole order flow (makes and deletes test data)
 
-## 4. How to use the design tokens
-Colors and fonts are set once in `src/index.css` under `@theme`.
-Use them as Tailwind classes:
+## Security
 
-- Colors: `bg-cream`, `text-plum`, `bg-salmon`, `bg-mint`, `bg-rose`, `bg-lime`, `bg-lavender`
-- Fonts: `font-display` (Fraunces, titles) and `font-sans` (Inter, text)
+- `.env` files are in `.gitignore`. **Never commit them.**
+- The Supabase SECRET key lives only in `server/.env`. The website uses only the anon key.
+- Row Level Security is ON for every table. Prices are always read from the database by the server.
 
-## 5. Glass water-drop button
+## Progress
 
-```tsx
-import GlassButton from './components/GlassButton'
-
-<GlassButton>Save</GlassButton>                          // clear glass
-<GlassButton variant="plum" size="lg" full>Add to cart</GlassButton>
-<GlassButton variant="mint" size="sm">WhatsApp</GlassButton>
-```
-
-To make a new color, add a class in `src/index.css` like `.glass-btn--mint`
-(change `--tint` and `--shadow` only).
-
-## 6. Git and GitHub (quick)
-
-```bash
-git init
-git add .
-git commit -m "Step 1: project setup"
-# create an empty repo on GitHub named sipora, then:
-git remote add origin https://github.com/YOUR-USERNAME/sipora.git
-git branch -M main
-git push -u origin main
-```
-
-The `.env` file is ignored by Git on purpose (it holds secret keys). Never upload it.
-
-## 7. What comes next
-- **Step 2:** Supabase tables (products, customers, carts, orders, loyalty) and security rules.
-- **Step 3:** Discover, Product, Cart, and Order screens connected to the database.
+- [x] Step 1: project setup
+- [x] Step 2: Supabase database, security rules, photo buckets, real products
+- [x] Step 3: Discover, Product, Bag, Orders
+- [x] Step 4: Node.js server (orders, loyalty discount, Instapay approval, emails)
+- [x] Step 5: login, sign up, password reset, Account screen, real Checkout
+- [ ] Step 6: admin dashboard
+- [ ] Step 7: reviews, blog, translate button, dark mode, map picker, PWA, SEO, analytics, loader
+- [ ] Step 8: deploy to Vercel, testing checklist, full code explanation
