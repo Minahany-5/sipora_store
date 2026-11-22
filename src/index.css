@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Sipora design tokens (from the approved design)
+   Use them in Tailwind like:  bg-cream  text-plum  bg-mint  font-display
+------------------------------------------------------------------- */
+@theme {
+  --color-cream: #fbf6ec;
+  --color-plum: #4a1f28;
+  --color-salmon: #f29b80;
+  --color-mint: #cfe6d9;
+  --color-rose: #f2c6d4;
+  --color-lime: #e0e8b0;
+  --color-lavender: #dad3ee;
+  --color-aqua: #2fb5a3;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-plum);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------------
+   Glassy "water drop" buttons
+   Layers: frosted fill + white border + curved highlight (::before)
+           + small reflection dot (::after) + soft coloured shadow.
+   Change --tint / --shadow to make new colour variants.
+------------------------------------------------------------------- */
+.glass-btn {
+  --tint: 255 255 255;
+  --shadow: 74 31 40;
+  --text: var(--color-plum);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  padding: 0.85rem 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  background:
+    linear-gradient(165deg, rgb(255 255 255 / 0.85) 0%, rgb(var(--tint) / 0.35) 45%, rgb(var(--tint) / 0.6) 100%);
+  border: 1px solid rgb(255 255 255 / 0.9);
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  backdrop-filter: blur(14px) saturate(170%);
+  box-shadow:
+    inset 0 2px 3px rgb(255 255 255 / 0.95),
+    inset 0 -8px 14px rgb(255 255 255 / 0.35),
+    inset 0 -2px 6px rgb(var(--shadow) / 0.1),
+    0 12px 22px -10px rgb(var(--shadow) / 0.45),
+    0 2px 4px rgb(var(--shadow) / 0.12);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+}
+
+/* curved light streak, like light on a water drop */
+.glass-btn::before {
+  content: "";
+  position: absolute;
+  top: 7%;
+  left: 7%;
+  width: 52%;
+  height: 40%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0));
+  transform: rotate(-6deg);
+  pointer-events: none;
+}
+
+/* tiny reflection dot */
+.glass-btn::after {
+  content: "";
+  position: absolute;
+  right: 11%;
+  bottom: 18%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.9);
+  box-shadow: 0 0 6px rgb(255 255 255 / 0.9);
+  pointer-events: none;
+}
+
+.glass-btn > * {
+  position: relative;
+  z-index: 1;
+}
+
+.glass-btn:hover {
+  filter: brightness(1.04) saturate(1.08);
+  transform: translateY(-1px);
+}
+
+.glass-btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow:
+    inset 0 2px 3px rgb(255 255 255 / 0.8),
+    inset 0 -4px 8px rgb(255 255 255 / 0.3),
+    0 6px 12px -8px rgb(var(--shadow) / 0.5);
+}
+
+.glass-btn:focus-visible {
+  outline: 3px solid rgb(var(--shadow) / 0.55);
+  outline-offset: 3px;
+}
+
+.glass-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---- colour variants ---- */
+.glass-btn--plum {
+  --tint: 74 31 40;
+  --text: #ffffff;
+  background:
+    linear-gradient(165deg, rgb(255 255 255 / 0.28) 0%, rgb(74 31 40 / 0.88) 38%, rgb(74 31 40 / 0.96) 100%);
+  border-color: rgb(255 255 255 / 0.45);
+}
+.glass-btn--plum::before {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.7), rgb(255 255 255 / 0));
+}
+
+.glass-btn--mint {
+  --tint: 207 230 217;
+  --shadow: 47 120 100;
+}
+.glass-btn--salmon {
+  --tint: 242 155 128;
+  --shadow: 190 90 60;
+}
+.glass-btn--rose {
+  --tint: 242 198 212;
+  --shadow: 170 80 110;
+}
+.glass-btn--lavender {
+  --tint: 218 211 238;
+  --shadow: 100 80 160;
+}
+
+/* ---- sizes ---- */
+.glass-btn--sm {
+  padding: 0.55rem 1rem;
+  font-size: 0.8rem;
+}
+.glass-btn--lg {
+  padding: 1.1rem 1.8rem;
+  font-size: 1.02rem;
+}
+.glass-btn--full {
+  width: 100%;
+}
+.glass-btn--icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+}
+
+/* bottom navigation: one big glass pill */
+.glass-nav {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.4rem;
+  border-radius: 9999px;
+  background: linear-gradient(165deg, rgb(255 255 255 / 0.8), rgb(255 255 255 / 0.4));
+  border: 1px solid rgb(255 255 255 / 0.9);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  backdrop-filter: blur(16px) saturate(170%);
+  box-shadow:
+    inset 0 2px 3px rgb(255 255 255 / 0.95),
+    0 16px 30px -14px rgb(74 31 40 / 0.5);
+}
