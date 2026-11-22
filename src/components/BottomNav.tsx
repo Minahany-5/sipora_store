@@ -10,10 +10,12 @@ const TABS: { id: Tab; label: string }[] = [
 interface BottomNavProps {
   active: Tab
   onChange?: (tab: Tab) => void
+  /** number of items in the bag (small badge on the Bag tab) */
+  bagCount?: number
 }
 
 /** Glass pill navigation, fixed to the bottom of the phone screen. */
-export default function BottomNav({ active, onChange }: BottomNavProps) {
+export default function BottomNav({ active, onChange, bagCount = 0 }: BottomNavProps) {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md px-4"
@@ -26,11 +28,20 @@ export default function BottomNav({ active, onChange }: BottomNavProps) {
             key={t.id}
             type="button"
             onClick={() => onChange?.(t.id)}
-            className={`flex-1 rounded-full py-2.5 text-xs font-semibold transition ${
+            aria-current={active === t.id ? 'page' : undefined}
+            className={`relative flex-1 rounded-full py-2.5 text-xs font-semibold transition ${
               active === t.id ? 'bg-plum text-white shadow-md' : 'text-plum/70'
             }`}
           >
             {t.label}
+            {t.id === 'bag' && bagCount > 0 && (
+              <span
+                className="absolute -top-1 end-3 flex h-4 min-w-4 items-center justify-center rounded-full bg-salmon px-1 text-[0.6rem] font-bold text-white"
+                aria-label={`${bagCount} items in bag`}
+              >
+                {bagCount}
+              </span>
+            )}
           </button>
         ))}
       </div>
