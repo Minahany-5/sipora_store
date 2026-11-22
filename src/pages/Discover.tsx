@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import EmptyCatalog from '../components/EmptyCatalog'
 import ErrorBox from '../components/ErrorBox'
 import ProductCard from '../components/ProductCard'
 import Skeleton from '../components/Skeleton'
@@ -86,7 +87,9 @@ export default function Discover() {
         </div>
       )}
 
-      {products && (
+      {products && products.length === 0 && <EmptyCatalog />}
+
+      {products && products.length > 0 && (
         <>
           <div className="mt-5 grid grid-cols-2 gap-3">
             {visible.map((p, i) => (

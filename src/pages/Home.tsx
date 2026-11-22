@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useCart } from '../cart/useCart'
+import EmptyCatalog from '../components/EmptyCatalog'
 import ErrorBox from '../components/ErrorBox'
 import GlassButton from '../components/GlassButton'
 import PriceTag from '../components/PriceTag'
 import ProductImage from '../components/ProductImage'
 import Skeleton from '../components/Skeleton'
 import { useProducts } from '../hooks/useProducts'
-import { defaultSize, isSoldOut, lineFromProduct, mainImageUrl, sizeOldPrice, sizePrice, splitName } from '../lib/products'
+import { defaultSize, isSoldOut, lineFromProduct, sizeOldPrice, sizePrice, splitName } from '../lib/products'
 
 /** Home: big salmon card with the selected bottle. The color dots pick the product. */
 export default function Home() {
@@ -59,6 +60,8 @@ export default function Home() {
         </>
       )}
 
+      {products && products.length === 0 && <EmptyCatalog />}
+
       {product && products && (
         <>
           <section className="relative mt-5 min-h-80 overflow-hidden rounded-[2rem] bg-salmon p-6">
@@ -70,14 +73,12 @@ export default function Home() {
             <p className="mt-16 max-w-[8rem] text-[0.65rem] font-semibold uppercase tracking-widest">
               Cold drinks. Good days.
             </p>
-            {mainImageUrl(product) && (
-              <ProductImage
-                key={product.id}
-                product={product}
-                priority
-                className="absolute right-5 top-10 h-52 rotate-[14deg] drop-shadow-xl"
-              />
-            )}
+            <ProductImage
+              key={product.id}
+              product={product}
+              priority
+              className="absolute right-5 top-10 h-52 rotate-[14deg] drop-shadow-xl"
+            />
             <div className="mt-10 flex gap-2">
               <GlassButton size="sm" onClick={handleShare}>
                 Share

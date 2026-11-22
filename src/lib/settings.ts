@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { supabase, supabaseConfigError } from './supabase'
 import type { StoreSettings } from '../types'
 
 let cache: Promise<StoreSettings> | null = null
@@ -7,6 +7,7 @@ let cache: Promise<StoreSettings> | null = null
 export function loadSettings(): Promise<StoreSettings> {
   if (!cache) {
     cache = (async () => {
+      if (supabaseConfigError) throw new Error(supabaseConfigError)
       const { data, error } = await supabase.from('store_settings').select('*').eq('id', 1).single()
       if (error) throw new Error(error.message)
       return data as unknown as StoreSettings

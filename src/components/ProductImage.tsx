@@ -1,6 +1,6 @@
-import { mainImage, imageUrl } from '../lib/products'
+import { imageUrl, mainImage } from '../lib/products'
 import type { Product } from '../types'
-import BottleIcon from './BottleIcon'
+import SafeImage from './SafeImage'
 
 interface ProductImageProps {
   product: Product
@@ -9,21 +9,16 @@ interface ProductImageProps {
   priority?: boolean
 }
 
-/** The product photo. If there is no photo, show the simple bottle drawing. */
+/** The product photo. If there is no photo (or it cannot load), show the simple bottle drawing. */
 export default function ProductImage({ product, className = '', priority = false }: ProductImageProps) {
   const img = mainImage(product)
-  const src = imageUrl(img?.path)
-
-  if (!src) {
-    return <BottleIcon color={product.product_colors[0]?.hex} className={className} />
-  }
   return (
-    <img
-      src={src}
+    <SafeImage
+      src={imageUrl(img?.path)}
       alt={img?.alt ?? product.name}
-      className={`object-contain ${className}`}
-      loading={priority ? 'eager' : 'lazy'}
-      decoding="async"
+      className={className}
+      priority={priority}
+      fallbackColor={product.product_colors[0]?.hex}
     />
   )
 }

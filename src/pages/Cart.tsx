@@ -1,8 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../cart/useCart'
 import BottleIcon from '../components/BottleIcon'
+import ErrorBox from '../components/ErrorBox'
 import GlassButton from '../components/GlassButton'
 import QtyStepper from '../components/QtyStepper'
+import SafeImage from '../components/SafeImage'
 import { useLoyalty } from '../hooks/useLoyalty'
 import { useSettings } from '../hooks/useSettings'
 import { formatEGP, ordinal } from '../lib/format'
@@ -12,7 +14,7 @@ import type { LoyaltyInfo, StoreSettings } from '../types'
 export default function Cart() {
   const navigate = useNavigate()
   const { lines, subtotal, setQuantity, remove } = useCart()
-  const settings = useSettings()
+  const { settings, error: settingsError } = useSettings()
   const loyalty = useLoyalty()
 
   if (lines.length === 0) {
@@ -54,11 +56,7 @@ export default function Cart() {
                 to={`/product/${line.slug}`}
                 className="flex h-24 w-20 shrink-0 items-end justify-center rounded-2xl bg-mint p-1"
               >
-                {src ? (
-                  <img src={src} alt={line.name} className="h-full object-contain" loading="lazy" decoding="async" />
-                ) : (
-                  <BottleIcon color={line.colorHex ?? undefined} className="h-full" />
-                )}
+                <SafeImage src={src} alt={line.name} className="h-full" fallbackColor={line.colorHex ?? undefined} />
               </Link>
               <div className="flex min-w-0 flex-1 flex-col justify-between">
                 <div className="flex items-start justify-between gap-2">
@@ -84,6 +82,12 @@ export default function Cart() {
           )
         })}
       </ul>
+
+      {settingsError && (
+        <div className="mt-5">
+          <ErrorBox message={settingsError} onRetry={() => window.location.reload()} />
+        </div>
+      )}
 
       {settings && <LoyaltyCard settings={settings} loyalty={loyalty} />}
 

@@ -4,6 +4,7 @@ import type { StoreSettings } from '../types'
 
 export function useSettings() {
   const [settings, setSettings] = useState<StoreSettings | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -11,13 +12,13 @@ export function useSettings() {
       .then((s) => {
         if (!cancelled) setSettings(s)
       })
-      .catch(() => {
-        /* the page shows "..." until the settings arrive */
+      .catch((err: unknown) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Something went wrong')
       })
     return () => {
       cancelled = true
     }
   }, [])
 
-  return settings
+  return { settings, error }
 }

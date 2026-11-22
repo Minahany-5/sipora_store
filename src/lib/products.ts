@@ -1,10 +1,12 @@
-import { supabase } from './supabase'
+import { supabase, supabaseConfigError } from './supabase'
 import type { CartLine, Product, ProductColor, ProductImage, ProductSize } from '../types'
 
 const bySort = <T extends { sort_order: number }>(a: T, b: T) => a.sort_order - b.sort_order
 
 /** Read all active products with their colors, sizes and images. */
 export async function fetchProducts(): Promise<Product[]> {
+  if (supabaseConfigError) throw new Error(supabaseConfigError)
+
   const { data, error } = await supabase
     .from('products')
     .select('*, product_colors(*), product_sizes(*), product_images(*)')

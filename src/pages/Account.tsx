@@ -5,7 +5,7 @@ import { useSettings } from '../hooks/useSettings'
 /** Starter Account screen. Login, rewards, and addresses come in Step 5. */
 export default function Account() {
   const navigate = useNavigate()
-  const settings = useSettings()
+  const { settings } = useSettings()
   const whatsapp = settings ? `https://wa.me/${settings.whatsapp_number.replace(/\D/g, '')}` : null
 
   return (
