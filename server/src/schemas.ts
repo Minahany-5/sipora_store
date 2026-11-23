@@ -34,7 +34,7 @@ export const createOrderSchema = z
         }),
       )
       .min(1, 'Your bag is empty')
-      .max(30),
+      .max(30, 'You can order up to 30 different items at once.'),
     paymentMethod: z.enum(['cod', 'instapay']),
     customer: z.object({
       name: z.string().trim().min(2, 'Please write your name').max(80),
